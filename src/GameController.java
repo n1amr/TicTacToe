@@ -23,8 +23,12 @@ public class GameController {
 		board = new Board();
 	}
 
-	public void play(int i, int j) {
-		board.play(i, j, player);
+	public boolean play(int i, int j) {
+		if (board.isEmptyCell(i, j)) {
+			board.play(i, j, player);
+			return true;
+		}
+		return false;
 	}
 
 	public Point respond() {
@@ -68,16 +72,16 @@ public class GameController {
 
 	public String getStatus() {
 		if (board.getStatus() == Board.X_WINS) {
-			return "X wins";
+			return "You win";
 		}
 		if (board.getStatus() == Board.O_WINS) {
-			return "O wins";
+			return "Computer wins";
 		}
 		if (board.getStatus() == Board.DRAW) {
 			return "Draw";
 		}
 		if (board.getStatus() == Board.UNFINISHED) {
-			return "Your turn";
+			return "Your turn (X)";
 		}
 		return null;
 	}

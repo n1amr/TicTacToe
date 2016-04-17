@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -30,7 +29,7 @@ public class GameForm extends JFrame implements ActionListener {
 		JButton resetButton = new JButton("Reset");
 		JButton exitButton = new JButton("Exit");
 		resultLabel = new JLabel("None", SwingConstants.CENTER);
-		resultLabel.setFont(new Font(Font.MONOSPACED, 0, 20));
+		resultLabel.setFont(new Font(Font.MONOSPACED, 0, 14));
 
 		controlsPanel.add(resultLabel);
 		controlsPanel.add(resetButton);
@@ -89,15 +88,18 @@ public class GameForm extends JFrame implements ActionListener {
 				if (src == gridButtons[i][j]) {
 					System.out.println("Clicked on cell (" + i + ", " + j + ")");
 
-					gameController.play(i, j);
-					((JButton) src).setText("" + Board.X_PLAYER);
+					boolean validPlay = gameController.play(i, j);
+					if (validPlay) {
+						((JButton) src).setText("" + Board.X_PLAYER);
 
-					Point p = gameController.respond();
-					if (p != null) {
-						System.out.println(p);
-						gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_PLAYER);
+						Point p = gameController.respond();
+						if (p != null) {
+							System.out.println(p);
+							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_PLAYER);
+						}
+						resultLabel.setText(gameController.getStatus());
 					}
-					resultLabel.setText(gameController.getStatus());
+
 					return;
 				}
 			}
