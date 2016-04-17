@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 public class Board {
 	public static final char EMPTY = '.';
-	public static final char X = 'x';
-	public static final char O = 'o';
+	public static final char X_PLAYER = 'x';
+	public static final char O_PLAYER = 'o';
 
 	private int n;
 
@@ -18,18 +18,18 @@ public class Board {
 	}
 
 	public void play(int i, int j, char player) {
-		if (data[i][j] == EMPTY)
+		if (isEmptyCell(i, j))
 			data[i][j] = player;
 		else
 			System.out.println("Error");
 	}
 
 	public void playO(int i, int j) {
-		play(i, j, O);
+		play(i, j, O_PLAYER);
 	}
 
 	public void playX(int i, int j) {
-		play(i, j, X);
+		play(i, j, X_PLAYER);
 	}
 
 	@Override
@@ -37,50 +37,12 @@ public class Board {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
+			for (int j = 0; j < n; j++)
 				stringBuilder.append(data[i][j]);
-			}
 			stringBuilder.append('\n');
 		}
 		return stringBuilder.toString();
 	}
-
-	// public String toString(int level) {
-	// StringBuilder stringBuilder = new StringBuilder();
-	//
-	// for (int i = 0; i < n; i++) {
-	// for (int j = 0; j < level; j++) {
-	// stringBuilder.append(" ");
-	// }
-	// for (int j = 0; j < n; j++) {
-	// stringBuilder.append(data[i][j]);
-	// }
-	// stringBuilder.append('\n');
-	// }
-	// return stringBuilder.toString();
-	// }
-
-	// public void print() {
-	// for (int j = 0; j < n + 2; j++) {
-	// System.out.print('-');
-	// }
-	// System.out.println();
-	//
-	// for (int i = 0; i < n; i++) {
-	// System.out.print('|');
-	// for (int j = 0; j < n; j++) {
-	// System.out.print(data[i][j]);
-	// }
-	// System.out.print('|');
-	// System.out.println();
-	// }
-	//
-	// for (int j = 0; j < n + 2; j++) {
-	// System.out.print('-');
-	// }
-	// System.out.println();
-	//
-	// }
 
 	public Board getCopy() {
 		Board board = new Board();
@@ -128,26 +90,20 @@ public class Board {
 		return windiag || winrevdiag;
 	}
 
-	int MAX = 1;
-	int MIN = -1;
-
 	public int getScore(char target_player, char current_player, int min_or_max, int level) {
 		int score = 0;
 
-		if (playerWins(getOpponent(target_player))) {
+		if (playerWins(getOpponent(target_player)))
 			score = -10;
-		} else if (playerWins(target_player)) {
+		else if (playerWins(target_player))
 			score = 10;
-		} else if (!gameFinished()) {
-			if (target_player == current_player)
-				score = Integer.MIN_VALUE;
-			else
-				score = Integer.MAX_VALUE;
+		else if (!gameFinished()) {
+			score = (target_player == current_player) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
 			int tmpscore;
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < n; j++) {
-					if (data[i][j] == EMPTY) {
+					if (isEmptyCell(i, j)) {
 						Board board = this.getCopy();
 						board.play(i, j, current_player);
 						tmpscore = board.getScore(target_player, getOpponent(current_player), min_or_max, level + 1);
@@ -164,61 +120,84 @@ public class Board {
 		return score;
 	}
 
-	public Board playSmart(char target_player) {
-		Board win_board = null;
+	public Board smartPlay(char target_player) {
 		Board tie_board = null;
 		Board lose_board = null;
 
 		int score;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				if (data[i][j] == EMPTY) {
+				if (isEmptyCell(i, j)) {
 					Board board = this.getCopy();
 					board.play(i, j, target_player);
 					score = board.getScore(target_player, getOpponent(target_player), 0, 0);
-					// System.out.println("i = " + i + " j = " + j + ",, " + score);
-					if (score > 0) {
-						win_board = board;
-						// return win_board;
-					} else if (score == 0) {
+
+					if (score > 0)
+						return board;
+					else if (score == 0)
 						tie_board = board;
-					} else {
+					else
 						lose_board = board;
-					}
 				}
 			}
 		}
-		if (win_board != null)
-			return win_board;
-		else if (tie_board != null)
+
+		if (tie_board != null)
 			return tie_board;
 		else if (lose_board != null)
 			return lose_board;
 		else
-			return this;
+			return null;
 	}
 
 	public char getOpponent(char player) {
-		if (player == X)
-			return O;
-		if (player == O)
-			return X;
+		if (player == X_PLAYER)
+			return O_PLAYER;
+		if (player == O_PLAYER)
+			return X_PLAYER;
 
 		return EMPTY;
 	}
 
 	public boolean gameFinished() {
-		return tie() || playerWins(X) || playerWins(O);
+		return isTie() || playerWins(X_PLAYER) || playerWins(O_PLAYER);
 	}
 
-	public boolean tie() {
-		if (playerWins(X) || playerWins(O)) {
+	public boolean isEmptyCell(int i, int j) {
+		return data[i][j] == EMPTY;
+	}
+
+	public boolean isTie() {
+		if (playerWins(X_PLAYER) || playerWins(O_PLAYER))
 			return true;
-		}
+
 		for (int i = 0; i < n; i++)
 			for (int j = 0; j < n; j++)
-				if (data[i][j] == EMPTY)
+				if (isEmptyCell(i, j))
 					return false;
 		return true;
+	}
+
+	public char whoWins() {
+		if (playerWins(X_PLAYER))
+			return X_PLAYER;
+		if (playerWins(O_PLAYER))
+			return O_PLAYER;
+		return EMPTY;
+	}
+
+	public static final int X_WINS = 0;
+	public static final int O_WINS = 1;
+	public static final int DRAW = 2;
+	public static final int UNFINISHED = 3;
+
+	public int getStatus() {
+		if (playerWins(X_PLAYER))
+			return X_WINS;
+		if (playerWins(O_PLAYER))
+			return O_WINS;
+		if (isTie())
+			return DRAW;
+		return UNFINISHED;
 	}
 }
