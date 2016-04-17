@@ -69,7 +69,6 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	void showForm() {
-		// setSize(1000, 1000);
 		pack();
 
 		setLocationRelativeTo(null); // Center the frame
@@ -86,17 +85,13 @@ public class GameForm extends JFrame implements ActionListener {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (src == gridButtons[i][j]) {
-					System.out.println("Clicked on cell (" + i + ", " + j + ")");
-
 					boolean validPlay = gameController.play(i, j);
 					if (validPlay) {
 						((JButton) src).setText("" + Board.X_PLAYER);
 
 						Point p = gameController.respond();
-						if (p != null) {
-							System.out.println(p);
+						if (p != null)
 							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_PLAYER);
-						}
 						resultLabel.setText(gameController.getStatus());
 					}
 

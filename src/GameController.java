@@ -5,17 +5,10 @@ public class GameController {
 
 	private Board board;
 	private char player;
-	private Random random;
-
-	// private void randomTurn() {
-	// player = random.nextInt() % 2 == 0 ? Board.X_PLAYER : Board.O_PLAYER;
-	// }
 
 	public GameController() {
 		board = new Board();
 
-		// random = new Random(System.currentTimeMillis());
-		// randomTurn();
 		player = Board.X_PLAYER;
 	}
 
@@ -33,10 +26,8 @@ public class GameController {
 
 	public Point respond() {
 		Point p = null;
-		if (!board.gameFinished()) {
+		if (!board.gameFinished())
 			p = board.smartPlay(Board.O_PLAYER);
-			System.out.println(board);
-		}
 		return p;
 	}
 
@@ -47,27 +38,6 @@ public class GameController {
 			System.out.println("O wins");
 		else if (board.getStatus() == Board.DRAW)
 			System.out.println("Draw");
-
-		// char player;
-		// System.out.println(board);
-		// for (int game = 0; !board.gameFinished(); game++) {
-		// player = (game % 2 == 0) ? Board.X_PLAYER : Board.O_PLAYER;
-		// if (player == Board.X_PLAYER) {
-		// int i = in.nextInt() - 1;
-		// int j = in.nextInt() - 1;
-		// board.play(i, j, player);
-		// } else {
-		// board = board.smartPlay(board.O_PLAYER);
-		// }
-		// System.out.println(board);
-		// }
-		//
-		// if (board.getStatus() == Board.X_WINS)
-		// System.out.println("X wins");
-		// else if (board.getStatus() == Board.O_WINS)
-		// System.out.println("O wins");
-		// else if (board.getStatus() == Board.DRAW)
-		// System.out.println("Draw");
 	}
 
 	public String getStatus() {
