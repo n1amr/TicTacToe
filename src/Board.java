@@ -1,3 +1,4 @@
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class Board {
@@ -120,9 +121,39 @@ public class Board {
 		return score;
 	}
 
-	public Board smartPlay(char target_player) {
-		Board tie_board = null;
-		Board lose_board = null;
+	// public Board smartPlay(char target_player) {
+	// Board tie_board = null;
+	// Board lose_board = null;
+	//
+	// int score;
+	// for (int i = 0; i < n; i++) {
+	// for (int j = 0; j < n; j++) {
+	// if (isEmptyCell(i, j)) {
+	// Board board = this.getCopy();
+	// board.play(i, j, target_player);
+	// score = board.getScore(target_player, getOpponent(target_player), 0, 0);
+	//
+	// if (score > 0)
+	// return board;
+	// else if (score == 0)
+	// tie_board = board;
+	// else
+	// lose_board = board;
+	// }
+	// }
+	// }
+	//
+	// if (tie_board != null)
+	// return tie_board;
+	// else if (lose_board != null)
+	// return lose_board;
+	// else
+	// return null;
+	// }
+	public Point smartPlay(char target_player) {
+		Point win_point = null;
+		Point lose_point = null;
+		Point tie_point = null;
 
 		int score;
 		for (int i = 0; i < n; i++) {
@@ -132,22 +163,27 @@ public class Board {
 					board.play(i, j, target_player);
 					score = board.getScore(target_player, getOpponent(target_player), 0, 0);
 
-					if (score > 0)
-						return board;
-					else if (score == 0)
-						tie_board = board;
-					else
-						lose_board = board;
+					if (score > 0) {
+						win_point = new Point(i, j);
+
+					} else if (score == 0) {
+						tie_point = new Point(i, j);
+					} else {
+						lose_point = new Point(i, j);
+					}
 				}
 			}
 		}
-
-		if (tie_board != null)
-			return tie_board;
-		else if (lose_board != null)
-			return lose_board;
-		else
-			return null;
+		Point p = null;
+		if (win_point != null)
+			p = win_point;
+		else if (tie_point != null)
+			p = tie_point;
+		else if (lose_point != null)
+			p = lose_point;
+		
+		data[(int) p.getX()][(int) p.getY()] = O_PLAYER;
+		return p;
 	}
 
 	public char getOpponent(char player) {
