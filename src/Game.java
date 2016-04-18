@@ -20,20 +20,15 @@ public class Game {
 
 	/** Play and return result of the game */
 	public boolean play(int i, int j, int player) {
+		boolean valid = false;
 		if (gameState == UNFINISHED && player == nextPlayer) {
-			boolean valid = board.play(i, j, player);
+			valid = board.play(i, j, player);
 			if (valid) {
 				updateGameState();
 				changeTurn();
 			}
-			return valid;
-		} else {
-			if (gameState != UNFINISHED)
-				System.out.println("Error: Game is finished");
-			else if (player != nextPlayer)
-				System.out.println("Error: That's not " + board.getPlayerSymbol(player) + " turn");
-			return false;
 		}
+		return valid;
 	}
 
 	public boolean play(Point point, int player) {

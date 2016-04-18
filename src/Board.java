@@ -35,8 +35,7 @@ public class Board {
 		if (isEmptyCell(i, j)) {
 			data[i][j] = getPlayerSymbol(player);
 			return true;
-		} else
-			System.out.println("Error: Played on non empty cell");
+		}
 		return false;
 	}
 
