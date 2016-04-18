@@ -20,12 +20,12 @@ public class GameForm extends JFrame implements ActionListener {
 
 	private JButton[][] gridButtons = new JButton[3][3];
 	private JLabel resultLabel;
-	private JButton multiplayerButton;
-	private JButton resetButton;
+	private JButton startMultiPlayerButton;
+	private JButton startSinglePlayerButton;
 	private JButton exitButton;
-	private JCheckBox multiplayerCheckBox;
 
 	private boolean multiplayer;
+	private int currentPlayer = Board.PLAYER1;
 
 	public GameForm() {
 		game = new Game(Board.PLAYER1, Board.X_SYMBOL, false);
@@ -34,14 +34,15 @@ public class GameForm extends JFrame implements ActionListener {
 		setResizable(false);
 
 		resultLabel = new JLabel("None", SwingConstants.CENTER);
-		resultLabel.setFont(new Font(Font.MONOSPACED, 0, 14));
+		resultLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+		resultLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 		// Control Buttons
-		multiplayerCheckBox = new JCheckBox("Multiplayer", false);
-		multiplayerCheckBox.addActionListener(this);
+		startSinglePlayerButton = new JButton("Start Singleplayer");
+		startSinglePlayerButton.addActionListener(this);
 
-		resetButton = new JButton("Reset");
-		resetButton.addActionListener(this);
+		startMultiPlayerButton = new JButton("Start Multiplayer");
+		startMultiPlayerButton.addActionListener(this);
 
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(this);
@@ -69,14 +70,15 @@ public class GameForm extends JFrame implements ActionListener {
 		controlsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
 
 		controlsPanel.add(resultLabel);
-		controlsPanel.add(multiplayerCheckBox);
-		controlsPanel.add(resetButton);
+		controlsPanel.add(startSinglePlayerButton);
+		controlsPanel.add(startMultiPlayerButton);
 		controlsPanel.add(exitButton);
 
 		add(controlsPanel);
 		add(gridPanel);
 
 		resetView();
+		updateResult();
 	}
 
 	void showForm() {
@@ -91,12 +93,12 @@ public class GameForm extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 
-		if (src == resetButton) {
-			resetView();
+		if (src == startSinglePlayerButton) {
+			startNewGame(false);
+		} else if (src == startMultiPlayerButton) {
+			startNewGame(true);
 		} else if (src == exitButton) {
 			System.exit(0);
-		} else if (src == multiplayerCheckBox) {
-			multiplayerCheckBoxChanged();
 		} else {
 			for (int i = 0; i < 3; i++)
 				for (int j = 0; j < 3; j++)
@@ -107,14 +109,10 @@ public class GameForm extends JFrame implements ActionListener {
 		}
 	}
 
-	private void multiplayerCheckBoxChanged() {
-		if (multiplayer != multiplayerCheckBox.isSelected()) {
-			multiplayer = multiplayerCheckBox.isSelected();
-			resetView();
-		}
+	private void startNewGame(boolean multiplayer) {
+		this.multiplayer = multiplayer;
+		resetView();
 	}
-
-	private int currentPlayer = Board.PLAYER1;
 
 	private void play(Object src, int i, int j) {
 		if (multiplayer)
@@ -129,7 +127,7 @@ public class GameForm extends JFrame implements ActionListener {
 			((JButton) src).setText("" + game.getBoard().getPlayerSymbol(currentPlayer));
 			currentPlayer = game.getBoard().getOpponent(currentPlayer);
 
-			updateResultLabel();
+			updateResult();
 		}
 	}
 
@@ -137,14 +135,14 @@ public class GameForm extends JFrame implements ActionListener {
 		boolean validPlay = game.play(i, j, Board.PLAYER1);
 		if (validPlay) {
 			((JButton) src).setText("" + Board.X_SYMBOL);
-			updateResultLabel();
+			updateResult();
 
 			Thread thread = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					Point p = AI.getBestPlay(game.getBoard(), Board.PLAYER2);
 					try {
-						Thread.sleep(250);
+						Thread.sleep(400);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -153,7 +151,7 @@ public class GameForm extends JFrame implements ActionListener {
 						boolean validPlay2 = game.play(p, Board.PLAYER2);
 						if (validPlay2)
 							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_SYMBOL);
-						updateResultLabel();
+						updateResult();
 					}
 				}
 			});
@@ -161,8 +159,15 @@ public class GameForm extends JFrame implements ActionListener {
 		}
 	}
 
-	private void updateResultLabel() {
+	private void updateResult() {
+		boolean buttonEnabled = (game.getGameState() == Game.UNFINISHED);
+
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				gridButtons[i][j].setEnabled(buttonEnabled);
+
 		resultLabel.setText(game.getStatus());
+
 	}
 
 	private void resetBoard() {
@@ -174,6 +179,6 @@ public class GameForm extends JFrame implements ActionListener {
 	public void resetView() {
 		game.resetGame(Board.PLAYER1, multiplayer);
 		resetBoard();
-		updateResultLabel();
+		updateResult();
 	}
 }
