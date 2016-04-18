@@ -13,9 +13,9 @@ public class Game {
 
 	public Game(int firstPlayer, char firstPlayerSymbol, boolean multiplayer) {
 		this.multiplayer = multiplayer;
-		this.nextPlayer = firstPlayer;
-		this.board = new Board();
-		this.gameState = UNFINISHED;
+		nextPlayer = firstPlayer;
+		board = new Board();
+		gameState = UNFINISHED;
 	}
 
 	/** Play and return result of the game */
@@ -76,16 +76,16 @@ public class Game {
 	public String getStatus() {
 		switch (gameState) {
 		case PLAYER1_WINS:
-			return (multiplayer) ? "Player 1 wins" : "You win";
+			return multiplayer ? "Player 1 wins" : "You win";
 		case PLAYER2_WINS:
-			return ((multiplayer) ? "Player 2" : "Computer") + " wins";
+			return (multiplayer ? "Player 2" : "Computer") + " wins";
 		case DRAW:
 			return "Draw";
 		case UNFINISHED:
 			if (multiplayer)
 				return "Player " + (nextPlayer == Board.PLAYER1 ? "1" : "2") + "'s turn";
 			else
-				return (nextPlayer == Board.PLAYER1 ? "Your turn" : "Thinking...");
+				return nextPlayer == Board.PLAYER1 ? "Your turn" : "Thinking...";
 		default:
 			return "Error";
 		}

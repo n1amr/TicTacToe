@@ -4,9 +4,10 @@ OBJDIR = bin
 
 SRCS = \
 Main.java\
-GameController.java\
+AI.java\
+Board.java\
 GameForm.java\
-Board.java
+Game.java
 
 COMPILER = javac
 FLAGS = -g

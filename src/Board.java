@@ -9,17 +9,11 @@ public class Board {
 	private char player1Symbol = X_SYMBOL;
 	private char player2Symbol = O_SYMBOL;
 
-
 	private static int N = 3;
 
 	public char[][] data;
 
-	// public Board(char player1Symbol, boolean multiplayer) {
 	public Board() {
-		// this.multiplayer = multiplayer;
-		// this.player1Symbol = player1Symbol;
-		// this.player2Symbol = player1Symbol == X_SYMBOL ? O_SYMBOL : X_SYMBOL;
-
 		data = new char[N][N];
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
@@ -27,7 +21,6 @@ public class Board {
 	}
 
 	public Board getCopy() {
-		// Board board = new Board(this.player1Symbol, this.multiplayer);
 		Board board = new Board();
 
 		board.data = new char[N][N];
@@ -74,12 +67,11 @@ public class Board {
 		// Check rows
 		for (int i = 0; i < N; i++) {
 			boolean winrow = true;
-			for (int j = 0; j < N; j++) {
+			for (int j = 0; j < N; j++)
 				if (data[i][j] != playerSymbol) {
 					winrow = false;
 					break;
 				}
-			}
 			if (winrow)
 				return true;
 		}
@@ -87,12 +79,11 @@ public class Board {
 		// Check columns
 		for (int j = 0; j < N; j++) {
 			boolean wincol = true;
-			for (int i = 0; i < N; i++) {
+			for (int i = 0; i < N; i++)
 				if (data[i][j] != playerSymbol) {
 					wincol = false;
 					break;
 				}
-			}
 			if (wincol)
 				return true;
 		}
@@ -111,7 +102,7 @@ public class Board {
 	}
 
 	public char getPlayerSymbol(int player) {
-		return (player == PLAYER1) ? player1Symbol : player2Symbol;
+		return player == PLAYER1 ? player1Symbol : player2Symbol;
 	}
 
 	public char getOpponent(int player) {

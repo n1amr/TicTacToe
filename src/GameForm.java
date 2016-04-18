@@ -12,34 +12,39 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class GameForm extends JFrame implements ActionListener {
+	private static final long serialVersionUID = 1L;
+
 	private Game game;
 
 	private JButton[][] gridButtons = new JButton[3][3];
 	private JLabel resultLabel;
+	private JButton multiplayerButton;
+	private JButton resetButton;
+	private JButton exitButton;
 
 	public GameForm(Game game) {
 		this.game = game;
-		this.setTitle("Tic Tac Toe");
-		this.setResizable(false);
+		setTitle("Tic Tac Toe");
+		setResizable(false);
 
-		GridLayout mainLayout = new GridLayout(1, 0, 10, 0);
-		setLayout(mainLayout);
-
-		GridLayout controlsLayout = new GridLayout(3, 1, 0, 5);
-		JPanel controlsPanel = new JPanel(controlsLayout);
-		JButton resetButton = new JButton("Reset");
-		JButton exitButton = new JButton("Exit");
 		resultLabel = new JLabel("None", SwingConstants.CENTER);
 		resultLabel.setFont(new Font(Font.MONOSPACED, 0, 14));
 
-		controlsPanel.add(resultLabel);
-		controlsPanel.add(resetButton);
-		controlsPanel.add(exitButton);
+		// Control Buttons
+		multiplayerButton = new JButton("Multiplayer");
+		multiplayerButton.addActionListener(this);
 
+		resetButton = new JButton("Reset");
+		resetButton.addActionListener(this);
+
+		exitButton = new JButton("Exit");
+		exitButton.addActionListener(this);
+
+		// Grid buttons
 		GridLayout gridLayout = new GridLayout(3, 3, 0, 0);
 		JPanel gridPanel = new JPanel(gridLayout);
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) {
 				gridButtons[i][j] = new JButton();
 				gridButtons[i][j].addActionListener(this);
@@ -47,25 +52,22 @@ public class GameForm extends JFrame implements ActionListener {
 				gridButtons[i][j].setBackground(Color.WHITE);
 				gridPanel.add(gridButtons[i][j]);
 			}
-		}
+
+		// Packing panels
+		GridLayout mainLayout = new GridLayout(1, 0, 10, 0);
+		setLayout(mainLayout);
+
+		GridLayout controlsLayout = new GridLayout(4, 1, 0, 5);
+		JPanel controlsPanel = new JPanel(controlsLayout);
+
+		controlsPanel.add(resultLabel);
+		controlsPanel.add(multiplayerButton);
+		controlsPanel.add(resetButton);
+		controlsPanel.add(exitButton);
 
 		add(controlsPanel);
 		add(gridPanel);
 
-		resetButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				resetView();
-			}
-		});
-		exitButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
 		resetView();
 	}
 
@@ -80,16 +82,20 @@ public class GameForm extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if (game.isGameFinished()) {
-			return;
-		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (src == gridButtons[i][j]) {
-					play(src, i, j);
-					return;
-				}
-			}
+
+		if (src == resetButton) {
+			resetView();
+		} else if (src == exitButton) {
+			System.exit(0);
+		} else if (src == multiplayerButton) {
+			System.out.println("Multi");
+		} else {
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++)
+					if (src == gridButtons[i][j]) {
+						play(src, i, j);
+						return;
+					}
 		}
 	}
 
@@ -109,10 +115,12 @@ public class GameForm extends JFrame implements ActionListener {
 						e.printStackTrace();
 					}
 
-					boolean validPlay2 = game.play(p, Board.PLAYER2);
-					if (validPlay2)
-						gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_SYMBOL);
-					updateResultLabel();
+					if (p != null) {
+						boolean validPlay2 = game.play(p, Board.PLAYER2);
+						if (validPlay2)
+							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_SYMBOL);
+						updateResultLabel();
+					}
 				}
 			});
 			thread.start();
@@ -120,11 +128,10 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	private void updateResultLabel() {
-		System.out.println(game.getStatus());
 		resultLabel.setText(game.getStatus());
 	}
 
-	private void updateBoard() {
+	private void resetBoard() {
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				gridButtons[i][j].setText("" + Board.EMPTY);
@@ -132,7 +139,7 @@ public class GameForm extends JFrame implements ActionListener {
 
 	public void resetView() {
 		game.resetGame(Board.PLAYER1);
+		resetBoard();
 		updateResultLabel();
-		updateBoard();
 	}
 }
