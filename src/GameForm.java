@@ -12,12 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class GameForm extends JFrame implements ActionListener {
+	private Game game;
+
 	private JButton[][] gridButtons = new JButton[3][3];
-	private GameController gameController;
 	private JLabel resultLabel;
 
-	public GameForm(GameController gameController) {
-		this.gameController = gameController;
+	public GameForm(Game game) {
+		this.game = game;
 		this.setTitle("Tic Tac Toe");
 		this.setResizable(false);
 
@@ -79,33 +80,59 @@ public class GameForm extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if (gameController.isFinished()) {
+		if (game.isGameFinished()) {
 			return;
 		}
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (src == gridButtons[i][j]) {
-					boolean validPlay = gameController.play(i, j);
-					if (validPlay) {
-						((JButton) src).setText("" + Board.X_PLAYER);
-
-						Point p = gameController.respond();
-						if (p != null)
-							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_PLAYER);
-						resultLabel.setText(gameController.getStatus());
-					}
-
+					play(src, i, j);
 					return;
 				}
 			}
 		}
 	}
 
-	public void resetView() {
-		gameController.reset();
-		resultLabel.setText("Your turn");
+	private void play(Object src, int i, int j) {
+		boolean validPlay = game.play(i, j, Board.PLAYER1);
+		if (validPlay) {
+			((JButton) src).setText("" + Board.X_SYMBOL);
+			updateResultLabel();
+
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Point p = AI.getBestPlay(game.getBoard(), Board.PLAYER2);
+					try {
+						Thread.sleep(250);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					boolean validPlay2 = game.play(p, Board.PLAYER2);
+					if (validPlay2)
+						gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_SYMBOL);
+					updateResultLabel();
+				}
+			});
+			thread.start();
+		}
+	}
+
+	private void updateResultLabel() {
+		System.out.println(game.getStatus());
+		resultLabel.setText(game.getStatus());
+	}
+
+	private void updateBoard() {
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				gridButtons[i][j].setText("" + Board.EMPTY);
+	}
+
+	public void resetView() {
+		game.resetGame(Board.PLAYER1);
+		updateResultLabel();
+		updateBoard();
 	}
 }

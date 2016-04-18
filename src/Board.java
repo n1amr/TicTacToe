@@ -1,66 +1,81 @@
-import java.awt.Point;
-import java.util.ArrayList;
-
 public class Board {
 	public static final char EMPTY = '.';
-	public static final char X_PLAYER = 'x';
-	public static final char O_PLAYER = 'o';
+	public static final char X_SYMBOL = 'x';
+	public static final char O_SYMBOL = 'o';
 
-	private int n;
+	public static final int PLAYER1 = 0;
+	public static final int PLAYER2 = 1;
+
+	private char player1Symbol = X_SYMBOL;
+	private char player2Symbol = O_SYMBOL;
+
+
+	private static int N = 3;
 
 	public char[][] data;
 
+	// public Board(char player1Symbol, boolean multiplayer) {
 	public Board() {
-		n = 3;
-		data = new char[n][n];
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < n; j++)
+		// this.multiplayer = multiplayer;
+		// this.player1Symbol = player1Symbol;
+		// this.player2Symbol = player1Symbol == X_SYMBOL ? O_SYMBOL : X_SYMBOL;
+
+		data = new char[N][N];
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
 				data[i][j] = EMPTY;
 	}
 
-	public void play(int i, int j, char player) {
-		if (isEmptyCell(i, j))
-			data[i][j] = player;
-		else
-			System.out.println("Error");
+	public Board getCopy() {
+		// Board board = new Board(this.player1Symbol, this.multiplayer);
+		Board board = new Board();
+
+		board.data = new char[N][N];
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
+				board.data[i][j] = data[i][j];
+		return board;
 	}
 
-	public void playO(int i, int j) {
-		play(i, j, O_PLAYER);
+	/** Play for player and returns true if play was valid */
+	public boolean play(int i, int j, int player) {
+		if (isEmptyCell(i, j)) {
+			data[i][j] = getPlayerSymbol(player);
+			return true;
+		} else
+			System.out.println("Error: Played on non empty cell");
+		return false;
 	}
 
-	public void playX(int i, int j) {
-		play(i, j, X_PLAYER);
+	public void play1(int i, int j) {
+		play(i, j, PLAYER1);
+	}
+
+	public void play2(int i, int j) {
+		play(i, j, PLAYER2);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++)
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++)
 				stringBuilder.append(data[i][j]);
 			stringBuilder.append('\n');
 		}
 		return stringBuilder.toString();
 	}
 
-	public Board getCopy() {
-		Board board = new Board();
-		board.n = n;
-		board.data = new char[n][n];
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < n; j++)
-				board.data[i][j] = data[i][j];
-		return board;
-	}
+	/** check whether the player has won */
+	public boolean playerWins(int player) {
+		char playerSymbol = getPlayerSymbol(player);
 
-	public boolean playerWins(char player) {
-		boolean wins = false;
-		for (int i = 0; i < n; i++) {
+		// Check rows
+		for (int i = 0; i < N; i++) {
 			boolean winrow = true;
-			for (int j = 0; j < n; j++) {
-				if (data[i][j] != player) {
+			for (int j = 0; j < N; j++) {
+				if (data[i][j] != playerSymbol) {
 					winrow = false;
 					break;
 				}
@@ -68,10 +83,12 @@ public class Board {
 			if (winrow)
 				return true;
 		}
-		for (int j = 0; j < n; j++) {
+
+		// Check columns
+		for (int j = 0; j < N; j++) {
 			boolean wincol = true;
-			for (int i = 0; i < n; i++) {
-				if (data[i][j] != player) {
+			for (int i = 0; i < N; i++) {
+				if (data[i][j] != playerSymbol) {
 					wincol = false;
 					break;
 				}
@@ -79,161 +96,45 @@ public class Board {
 			if (wincol)
 				return true;
 		}
+
+		// Check diagonals
 		boolean windiag = true;
 		boolean winrevdiag = true;
-		for (int i = 0; i < n; i++) {
-			if (data[i][i] != player)
+		for (int i = 0; i < N; i++) {
+			if (data[i][i] != playerSymbol)
 				windiag = false;
 
-			if (data[i][n - i - 1] != player)
+			if (data[i][N - i - 1] != playerSymbol)
 				winrevdiag = false;
 		}
 		return windiag || winrevdiag;
 	}
 
-	public int getScore(char target_player, char current_player, int min_or_max, int level) {
-		int score = 0;
-
-		if (playerWins(getOpponent(target_player)))
-			score = -10;
-		else if (playerWins(target_player))
-			score = 10;
-		else if (!gameFinished()) {
-			score = (target_player == current_player) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-
-			int tmpscore;
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < n; j++) {
-					if (isEmptyCell(i, j)) {
-						Board board = this.getCopy();
-						board.play(i, j, current_player);
-						tmpscore = board.getScore(target_player, getOpponent(current_player), min_or_max, level + 1);
-
-						if (target_player == current_player && tmpscore > score)
-							score = tmpscore;
-						else if (target_player != current_player && tmpscore < score)
-							score = tmpscore;
-					}
-				}
-			}
-		}
-
-		return score;
+	public char getPlayerSymbol(int player) {
+		return (player == PLAYER1) ? player1Symbol : player2Symbol;
 	}
 
-	// public Board smartPlay(char target_player) {
-	// Board tie_board = null;
-	// Board lose_board = null;
-	//
-	// int score;
-	// for (int i = 0; i < n; i++) {
-	// for (int j = 0; j < n; j++) {
-	// if (isEmptyCell(i, j)) {
-	// Board board = this.getCopy();
-	// board.play(i, j, target_player);
-	// score = board.getScore(target_player, getOpponent(target_player), 0, 0);
-	//
-	// if (score > 0)
-	// return board;
-	// else if (score == 0)
-	// tie_board = board;
-	// else
-	// lose_board = board;
-	// }
-	// }
-	// }
-	//
-	// if (tie_board != null)
-	// return tie_board;
-	// else if (lose_board != null)
-	// return lose_board;
-	// else
-	// return null;
-	// }
-	public Point smartPlay(char target_player) {
-		Point win_point = null;
-		Point lose_point = null;
-		Point tie_point = null;
-
-		int score;
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				if (isEmptyCell(i, j)) {
-					Board board = this.getCopy();
-					board.play(i, j, target_player);
-					score = board.getScore(target_player, getOpponent(target_player), 0, 0);
-
-					if (score > 0) {
-						win_point = new Point(i, j);
-
-					} else if (score == 0) {
-						tie_point = new Point(i, j);
-					} else {
-						lose_point = new Point(i, j);
-					}
-				}
-			}
-		}
-		Point p = null;
-		if (win_point != null)
-			p = win_point;
-		else if (tie_point != null)
-			p = tie_point;
-		else if (lose_point != null)
-			p = lose_point;
-		
-		data[(int) p.getX()][(int) p.getY()] = O_PLAYER;
-		return p;
-	}
-
-	public char getOpponent(char player) {
-		if (player == X_PLAYER)
-			return O_PLAYER;
-		if (player == O_PLAYER)
-			return X_PLAYER;
+	public char getOpponent(int player) {
+		if (player == PLAYER1)
+			return PLAYER2;
+		if (player == PLAYER2)
+			return PLAYER1;
 
 		return EMPTY;
-	}
-
-	public boolean gameFinished() {
-		return isTie() || playerWins(X_PLAYER) || playerWins(O_PLAYER);
 	}
 
 	public boolean isEmptyCell(int i, int j) {
 		return data[i][j] == EMPTY;
 	}
 
-	public boolean isTie() {
-		if (playerWins(X_PLAYER) || playerWins(O_PLAYER))
+	public boolean isDraw() {
+		if (playerWins(PLAYER1) || playerWins(PLAYER2))
 			return true;
 
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < n; j++)
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
 				if (isEmptyCell(i, j))
 					return false;
 		return true;
-	}
-
-	public char whoWins() {
-		if (playerWins(X_PLAYER))
-			return X_PLAYER;
-		if (playerWins(O_PLAYER))
-			return O_PLAYER;
-		return EMPTY;
-	}
-
-	public static final int X_WINS = 0;
-	public static final int O_WINS = 1;
-	public static final int DRAW = 2;
-	public static final int UNFINISHED = 3;
-
-	public int getStatus() {
-		if (playerWins(X_PLAYER))
-			return X_WINS;
-		if (playerWins(O_PLAYER))
-			return O_WINS;
-		if (isTie())
-			return DRAW;
-		return UNFINISHED;
 	}
 }
