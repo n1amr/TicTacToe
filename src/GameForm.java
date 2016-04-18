@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -48,6 +49,7 @@ public class GameForm extends JFrame implements ActionListener {
 		// Grid buttons
 		GridLayout gridLayout = new GridLayout(3, 3, 0, 0);
 		JPanel gridPanel = new JPanel(gridLayout);
+		gridPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) {
@@ -59,11 +61,12 @@ public class GameForm extends JFrame implements ActionListener {
 			}
 
 		// Packing panels
-		GridLayout mainLayout = new GridLayout(1, 0, 10, 0);
+		GridLayout mainLayout = new GridLayout(1, 0, 1, 1);
 		setLayout(mainLayout);
 
 		GridLayout controlsLayout = new GridLayout(4, 1, 0, 5);
 		JPanel controlsPanel = new JPanel(controlsLayout);
+		controlsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
 
 		controlsPanel.add(resultLabel);
 		controlsPanel.add(multiplayerCheckBox);
