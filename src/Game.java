@@ -67,10 +67,11 @@ public class Game {
 		return board;
 	}
 
-	public void resetGame(int firstPlayer) {
+	public void resetGame(int firstPlayer, boolean multiplayer) {
 		board = new Board();
 		gameState = UNFINISHED;
 		nextPlayer = firstPlayer;
+		this.multiplayer = multiplayer;
 	}
 
 	public String getStatus() {
