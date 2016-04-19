@@ -1,5 +1,5 @@
 public class Board {
-	public static final char EMPTY = '.';
+	public static final char EMPTY = ' ';
 	public static final char X_SYMBOL = 'x';
 	public static final char O_SYMBOL = 'o';
 
@@ -39,27 +39,35 @@ public class Board {
 		return false;
 	}
 
-	public void play1(int i, int j) {
-		play(i, j, PLAYER1);
+	public char getPlayerSymbol(int player) {
+		return player == PLAYER1 ? player1Symbol : player2Symbol;
 	}
 
-	public void play2(int i, int j) {
-		play(i, j, PLAYER2);
+	public char getOpponent(int player) {
+		if (player == PLAYER1)
+			return PLAYER2;
+		if (player == PLAYER2)
+			return PLAYER1;
+
+		return EMPTY;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder();
+	public boolean isEmptyCell(int i, int j) {
+		return data[i][j] == EMPTY;
+	}
 
-		for (int i = 0; i < N; i++) {
+	public boolean isDraw() {
+		if (playerWins(PLAYER1) || playerWins(PLAYER2))
+			return false;
+
+		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
-				stringBuilder.append(data[i][j]);
-			stringBuilder.append('\n');
-		}
-		return stringBuilder.toString();
+				if (isEmptyCell(i, j))
+					return false;
+		return true;
 	}
 
-	/** check whether the player has won */
+	/** Checks whether the player has won */
 	public boolean playerWins(int player) {
 		char playerSymbol = getPlayerSymbol(player);
 
@@ -100,31 +108,15 @@ public class Board {
 		return windiag || winrevdiag;
 	}
 
-	public char getPlayerSymbol(int player) {
-		return player == PLAYER1 ? player1Symbol : player2Symbol;
-	}
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
 
-	public char getOpponent(int player) {
-		if (player == PLAYER1)
-			return PLAYER2;
-		if (player == PLAYER2)
-			return PLAYER1;
-
-		return EMPTY;
-	}
-
-	public boolean isEmptyCell(int i, int j) {
-		return data[i][j] == EMPTY;
-	}
-
-	public boolean isDraw() {
-		if (playerWins(PLAYER1) || playerWins(PLAYER2))
-			return true;
-
-		for (int i = 0; i < N; i++)
+		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++)
-				if (isEmptyCell(i, j))
-					return false;
-		return true;
+				stringBuilder.append(data[i][j]);
+			stringBuilder.append('\n');
+		}
+		return stringBuilder.toString();
 	}
 }
