@@ -16,7 +16,7 @@ public class GameForm extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	// Game state variables
-	private GameController gameController;
+	private Game game;
 	private boolean multiplayer;
 	private int currentPlayer = Board.PLAYER1;
 
@@ -31,7 +31,7 @@ public class GameForm extends JFrame implements ActionListener {
 		setTitle("Tic Tac Toe");
 		setResizable(false);
 
-		gameController = new GameController(Board.PLAYER1, Board.X_SYMBOL, false);
+		game = new Game(Board.PLAYER1, Board.X_SYMBOL, false);
 
 		// Game result label
 		resultLabel = new JLabel("None", SwingConstants.CENTER);
@@ -133,17 +133,17 @@ public class GameForm extends JFrame implements ActionListener {
 
 	private void play(JButton button, int i, int j) {
 		if (multiplayer) {
-			boolean validPlay = gameController.play(i, j, currentPlayer);
+			boolean validPlay = game.play(i, j, currentPlayer);
 			if (validPlay) {
-				button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
-				currentPlayer = gameController.getBoard().getOpponent(currentPlayer);
+				button.setText("" + game.getBoard().getPlayerSymbol(currentPlayer));
+				currentPlayer = game.getBoard().getOpponent(currentPlayer);
 
 				updateGameView();
 			}
 		} else {
-			boolean validPlay = gameController.play(i, j, Board.PLAYER1);
+			boolean validPlay = game.play(i, j, Board.PLAYER1);
 			if (validPlay) {
-				button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
+				button.setText("" + game.getBoard().getPlayerSymbol(currentPlayer));
 				updateGameView();
 
 				playAI();
@@ -156,7 +156,7 @@ public class GameForm extends JFrame implements ActionListener {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Point best_play = AI.getBestPlay(gameController.getBoard(), Board.PLAYER2);
+				Point best_play = AI.getBestPlay(game.getBoard(), Board.PLAYER2);
 
 				// Add delay for thinking
 				try {
@@ -167,10 +167,10 @@ public class GameForm extends JFrame implements ActionListener {
 
 				// Attempt to play
 				if (best_play != null) {
-					boolean validPlay = gameController.play(best_play, Board.PLAYER2);
+					boolean validPlay = game.play(best_play, Board.PLAYER2);
 					if (validPlay) {
 						// Write on button
-						gridButtons[(int) best_play.getX()][(int) best_play.getY()].setText("" + gameController.getBoard().getPlayerSymbol(Board.PLAYER2));
+						gridButtons[(int) best_play.getX()][(int) best_play.getY()].setText("" + game.getBoard().getPlayerSymbol(Board.PLAYER2));
 						updateGameView();
 					}
 				}
@@ -184,9 +184,9 @@ public class GameForm extends JFrame implements ActionListener {
 	 * finished
 	 */
 	private void updateGameView() {
-		resultLabel.setText(gameController.getStateText());
+		resultLabel.setText(game.getStateText());
 
-		boolean buttonEnabled = gameController.getGameState() == GameController.UNFINISHED;
+		boolean buttonEnabled = game.getState() == Game.UNFINISHED;
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
@@ -196,7 +196,7 @@ public class GameForm extends JFrame implements ActionListener {
 	/** Reset current player, game controller and empty text on buttons */
 	private void resetGame() {
 		currentPlayer = Board.PLAYER1;
-		gameController.resetGame(Board.PLAYER1, multiplayer);
+		game.reset(Board.PLAYER1, multiplayer);
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)

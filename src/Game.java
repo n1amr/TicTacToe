@@ -1,6 +1,6 @@
 import java.awt.Point;
 
-public class GameController {
+public class Game {
 	// Game states constants
 	public static final int PLAYER1_WINS = 0;
 	public static final int PLAYER2_WINS = 1;
@@ -13,12 +13,12 @@ public class GameController {
 	private int nextPlayer;
 	private Board board;
 
-	public GameController(int firstPlayer, char firstPlayerSymbol, boolean multiplayer) {
-		resetGame(firstPlayer, multiplayer);
+	public Game(int firstPlayer, char firstPlayerSymbol, boolean multiplayer) {
+		reset(firstPlayer, multiplayer);
 	}
 
 	/** Reset all game data */
-	public void resetGame(int firstPlayer, boolean multiplayer) {
+	public void reset(int firstPlayer, boolean multiplayer) {
 		this.gameState = UNFINISHED;
 		this.multiplayer = multiplayer;
 		this.nextPlayer = firstPlayer;
@@ -31,7 +31,7 @@ public class GameController {
 		if (gameState == UNFINISHED && player == nextPlayer) {
 			valid = board.play(i, j, player);
 			if (valid) {
-				updateGameState();
+				updateState();
 				changeTurn();
 			}
 		}
@@ -47,11 +47,11 @@ public class GameController {
 		nextPlayer = board.getOpponent(nextPlayer);
 	}
 
-	public boolean isGameFinished() {
+	public boolean isFinished() {
 		return gameState != UNFINISHED;
 	}
 
-	public void updateGameState() {
+	private void updateState() {
 		if (board.playerWins(Board.PLAYER1))
 			gameState = PLAYER1_WINS;
 		else if (board.playerWins(Board.PLAYER2))
@@ -80,7 +80,7 @@ public class GameController {
 		}
 	}
 
-	public int getGameState() {
+	public int getState() {
 		return gameState;
 	}
 
