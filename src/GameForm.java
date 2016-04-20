@@ -78,11 +78,11 @@ public class GameForm extends JFrame implements ActionListener {
 		add(controlsPanel);
 		add(gridPanel);
 
-		resetView();
+		resetGame();
 		updateGameView();
 	}
 
-	void showForm() {
+	public void showForm() {
 		pack();
 
 		// Show form on the center
@@ -128,7 +128,7 @@ public class GameForm extends JFrame implements ActionListener {
 	 */
 	private void startNewGame(boolean multiplayer) {
 		this.multiplayer = multiplayer;
-		resetView();
+		resetGame();
 	}
 
 	private void play(JButton button, int i, int j) {
@@ -179,18 +179,22 @@ public class GameForm extends JFrame implements ActionListener {
 		thread.start();
 	}
 
+	/**
+	 * Updates text in the result label and disables buttons if the game was
+	 * finished
+	 */
 	private void updateGameView() {
+		resultLabel.setText(gameController.getStatus());
+
 		boolean buttonEnabled = gameController.getGameState() == GameController.UNFINISHED;
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				gridButtons[i][j].setEnabled(buttonEnabled);
-
-		resultLabel.setText(gameController.getStatus());
-
 	}
 
-	public void resetView() {
+	/** Reset current player, game controller and empty text on buttons */
+	private void resetGame() {
 		currentPlayer = Board.PLAYER1;
 		gameController.resetGame(Board.PLAYER1, multiplayer);
 
