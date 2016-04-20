@@ -79,7 +79,7 @@ public class GameForm extends JFrame implements ActionListener {
 		add(gridPanel);
 
 		resetView();
-		updateGameState();
+		updateGameView();
 	}
 
 	void showForm() {
@@ -138,13 +138,13 @@ public class GameForm extends JFrame implements ActionListener {
 				button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
 				currentPlayer = gameController.getBoard().getOpponent(currentPlayer);
 
-				updateGameState();
+				updateGameView();
 			}
 		} else {
 			boolean validPlay = gameController.play(i, j, Board.PLAYER1);
 			if (validPlay) {
 				button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
-				updateGameState();
+				updateGameView();
 
 				playAI();
 			}
@@ -171,7 +171,7 @@ public class GameForm extends JFrame implements ActionListener {
 					if (validPlay) {
 						// Write on button
 						gridButtons[(int) best_play.getX()][(int) best_play.getY()].setText("" + gameController.getBoard().getPlayerSymbol(Board.PLAYER2));
-						updateGameState();
+						updateGameView();
 					}
 				}
 			}
@@ -179,7 +179,7 @@ public class GameForm extends JFrame implements ActionListener {
 		thread.start();
 	}
 
-	private void updateGameState() {
+	private void updateGameView() {
 		boolean buttonEnabled = gameController.getGameState() == GameController.UNFINISHED;
 
 		for (int i = 0; i < 3; i++)
@@ -190,16 +190,14 @@ public class GameForm extends JFrame implements ActionListener {
 
 	}
 
-	private void resetBoard() {
-		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++)
-				gridButtons[i][j].setText("" + Board.EMPTY);
-	}
-
 	public void resetView() {
 		currentPlayer = Board.PLAYER1;
 		gameController.resetGame(Board.PLAYER1, multiplayer);
-		resetBoard();
-		updateGameState();
+
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				gridButtons[i][j].setText("" + Board.EMPTY);
+
+		updateGameView();
 	}
 }
