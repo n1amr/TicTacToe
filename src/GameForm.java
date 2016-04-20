@@ -79,7 +79,7 @@ public class GameForm extends JFrame implements ActionListener {
 		add(gridPanel);
 
 		resetView();
-		updateResult();
+		updateGameState();
 	}
 
 	void showForm() {
@@ -132,51 +132,54 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	private void play(JButton button, int i, int j) {
-		if (multiplayer)
-			multiPlayerPlay(button, i, j);
-		else
-			singlePlayerPlay(button, i, j);
-	}
+		if (multiplayer) {
+			boolean validPlay = gameController.play(i, j, currentPlayer);
+			if (validPlay) {
+				button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
+				currentPlayer = gameController.getBoard().getOpponent(currentPlayer);
 
-	private void multiPlayerPlay(JButton button, int i, int j) {
-		boolean validPlay = gameController.play(i, j, currentPlayer);
-		if (validPlay) {
-			button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
-			currentPlayer = gameController.getBoard().getOpponent(currentPlayer);
+				updateGameState();
+			}
+		} else {
+			boolean validPlay = gameController.play(i, j, Board.PLAYER1);
+			if (validPlay) {
+				button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
+				updateGameState();
 
-			updateResult();
+				playAI();
+			}
+
 		}
 	}
 
-	private void singlePlayerPlay(JButton button, int i, int j) {
-		boolean validPlay = gameController.play(i, j, Board.PLAYER1);
-		if (validPlay) {
-			button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
-			updateResult();
+	private void playAI() {
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Point best_play = AI.getBestPlay(gameController.getBoard(), Board.PLAYER2);
 
-			Thread thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Point p = AI.getBestPlay(gameController.getBoard(), Board.PLAYER2);
-					try {
-						Thread.sleep(400);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+				// Add delay for thinking
+				try {
+					Thread.sleep(400);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 
-					if (p != null) {
-						boolean validPlay2 = gameController.play(p, Board.PLAYER2);
-						if (validPlay2)
-							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + gameController.getBoard().getPlayerSymbol(Board.PLAYER2));
-						updateResult();
+				// Attempt to play
+				if (best_play != null) {
+					boolean validPlay = gameController.play(best_play, Board.PLAYER2);
+					if (validPlay) {
+						// Write on button
+						gridButtons[(int) best_play.getX()][(int) best_play.getY()].setText("" + gameController.getBoard().getPlayerSymbol(Board.PLAYER2));
+						updateGameState();
 					}
 				}
-			});
-			thread.start();
-		}
+			}
+		});
+		thread.start();
 	}
 
-	private void updateResult() {
+	private void updateGameState() {
 		boolean buttonEnabled = gameController.getGameState() == GameController.UNFINISHED;
 
 		for (int i = 0; i < 3; i++)
@@ -194,8 +197,9 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	public void resetView() {
+		currentPlayer = Board.PLAYER1;
 		gameController.resetGame(Board.PLAYER1, multiplayer);
 		resetBoard();
-		updateResult();
+		updateGameState();
 	}
 }
