@@ -1,21 +1,25 @@
 import java.awt.Point;
 
 public class AI {
-	private static int n = 3;
+	private static int N = 3;
 
-	public static int getScore(Board board, int target_player, int current_player) {
+	/**
+	 * Get the score of the passed board and returns 10 if target player can win,
+	 * -10 if target player may lose
+	 */
+	private static int getScore(Board board, int target_player, int current_player) {
 		int score = 0;
 
 		if (board.playerWins(board.getOpponent(target_player)))
 			score = -10;
 		else if (board.playerWins(target_player))
 			score = 10;
-		else if (!board.isDraw()) {// if (!board.gameFinished()) {
+		else if (!board.isDraw()) { // Calculate scores for all sub boards
 			score = target_player == current_player ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
 			int tmpscore;
-			for (int i = 0; i < n; i++)
-				for (int j = 0; j < n; j++)
+			for (int i = 0; i < N; i++)
+				for (int j = 0; j < N; j++)
 					if (board.isEmptyCell(i, j)) {
 						Board temp_board = board.getCopy();
 						temp_board.play(i, j, current_player);
@@ -37,8 +41,8 @@ public class AI {
 		Point lose_point = null;
 
 		int score;
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < n; j++)
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
 				if (board.isEmptyCell(i, j)) {
 					Board temp_board = board.getCopy();
 					temp_board.play(i, j, target_player);

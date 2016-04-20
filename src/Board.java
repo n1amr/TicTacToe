@@ -1,4 +1,6 @@
 public class Board {
+	private static int N = 3;
+
 	public static final char EMPTY = ' ';
 	public static final char X_SYMBOL = 'x';
 	public static final char O_SYMBOL = 'o';
@@ -9,8 +11,6 @@ public class Board {
 	private char player1Symbol = X_SYMBOL;
 	private char player2Symbol = O_SYMBOL;
 
-	private static int N = 3;
-
 	public char[][] data;
 
 	public Board() {
@@ -20,6 +20,7 @@ public class Board {
 				data[i][j] = EMPTY;
 	}
 
+	/** Deep copy of the board */
 	public Board getCopy() {
 		Board board = new Board();
 
