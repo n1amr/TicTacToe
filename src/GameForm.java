@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -123,8 +124,8 @@ public class GameForm extends JFrame implements ActionListener {
 	 * Starts a new game
 	 *
 	 * @param multiplayer</br>
-	 *          true: for multi player game </br>
-	 *          false: for single player game
+	 *            true: for multi player game </br>
+	 *            false: for single player game
 	 */
 	private void startNewGame(boolean multiplayer) {
 		this.multiplayer = multiplayer;
@@ -143,7 +144,7 @@ public class GameForm extends JFrame implements ActionListener {
 		} else {
 			boolean validPlay = game.play(i, j, Board.PLAYER1);
 			if (validPlay) {
-				button.setText("" + game.getBoard().getPlayerSymbol(currentPlayer));
+				button.setText("" + game.getBoard().getPlayerSymbol(Board.PLAYER1));
 				updateGameView();
 
 				playAI();
@@ -170,7 +171,8 @@ public class GameForm extends JFrame implements ActionListener {
 					boolean validPlay = game.play(best_play, Board.PLAYER2);
 					if (validPlay) {
 						// Write on button
-						gridButtons[(int) best_play.getX()][(int) best_play.getY()].setText("" + game.getBoard().getPlayerSymbol(Board.PLAYER2));
+						gridButtons[(int) best_play.getX()][(int) best_play.getY()]
+								.setText("" + game.getBoard().getPlayerSymbol(Board.PLAYER2));
 						updateGameView();
 					}
 				}
@@ -195,13 +197,22 @@ public class GameForm extends JFrame implements ActionListener {
 
 	/** Reset current player, game controller and empty text on buttons */
 	private void resetGame() {
-		currentPlayer = Board.PLAYER1;
-		game.reset(Board.PLAYER1, multiplayer);
+		int firstPlayer;
+		if (multiplayer)
+			firstPlayer = currentPlayer; // The last losing player
+		else
+			firstPlayer = (new Random().nextInt(2) == 0) ? Board.PLAYER1 : Board.PLAYER2;
+
+		currentPlayer = firstPlayer;
+		game.reset(currentPlayer, multiplayer);
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				gridButtons[i][j].setText("" + Board.EMPTY);
 
 		updateGameView();
+
+		if (firstPlayer == Board.PLAYER2 && !multiplayer)
+			playAI();
 	}
 }

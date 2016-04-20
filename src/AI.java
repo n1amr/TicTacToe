@@ -1,11 +1,13 @@
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class AI {
 	private static int N = 3;
 
 	/**
-	 * Get the score of the passed board and returns 10 if target player can win,
-	 * -10 if target player may lose
+	 * Get the score of the passed board and returns 10 if target player can
+	 * win, -10 if target player may lose
 	 */
 	private static int getScore(Board board, int target_player, int current_player) {
 		int score = 0;
@@ -36,9 +38,11 @@ public class AI {
 	}
 
 	public static Point getBestPlay(Board board, int target_player) {
-		Point win_point = null;
-		Point draw_point = null;
-		Point lose_point = null;
+		Random random = new Random(System.currentTimeMillis());
+
+		ArrayList<Point> win_points = new ArrayList<>();
+		ArrayList<Point> draw_points = new ArrayList<>();
+		ArrayList<Point> lose_points = new ArrayList<>();
 
 		int score;
 		for (int i = 0; i < N; i++)
@@ -49,22 +53,23 @@ public class AI {
 					score = getScore(temp_board, target_player, temp_board.getOpponent(target_player));
 
 					if (score > 0)
-						win_point = new Point(i, j);
+						win_points.add(new Point(i, j));
 					else if (score == 0)
-						draw_point = new Point(i, j);
+						draw_points.add(new Point(i, j));
 					else
-						lose_point = new Point(i, j);
+						lose_points.add(new Point(i, j));
 				}
 
-		// Select the best move to be the first one available from a win move, draw
+		// Select the best move to be the first one available from a win move,
+		// draw
 		// move and lose move
 		Point best_point = null;
-		if (win_point != null)
-			best_point = win_point;
-		else if (draw_point != null)
-			best_point = draw_point;
-		else if (lose_point != null)
-			best_point = lose_point;
+		if (win_points.size() != 0)
+			best_point = win_points.get(random.nextInt(win_points.size()));
+		else if (draw_points.size() != 0)
+			best_point = draw_points.get(random.nextInt(draw_points.size()));
+		else if (lose_points.size() != 0)
+			best_point = lose_points.get(random.nextInt(lose_points.size()));
 
 		return best_point;
 	}
