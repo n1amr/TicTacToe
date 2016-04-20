@@ -92,20 +92,19 @@ public class GameForm extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 
-		if (src == startSinglePlayerButton) {
+		if (src == startSinglePlayerButton)
 			startNewGame(false);
-		} else if (src == startMultiPlayerButton) {
+		else if (src == startMultiPlayerButton)
 			startNewGame(true);
-		} else if (src == exitButton) {
+		else if (src == exitButton)
 			System.exit(0);
-		} else {
+		else
 			for (int i = 0; i < 3; i++)
 				for (int j = 0; j < 3; j++)
 					if (src == gridButtons[i][j]) {
 						play(src, i, j);
 						return;
 					}
-		}
 	}
 
 	private void startNewGame(boolean multiplayer) {
@@ -159,7 +158,7 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	private void updateResult() {
-		boolean buttonEnabled = (game.getGameState() == Game.UNFINISHED);
+		boolean buttonEnabled = game.getGameState() == Game.UNFINISHED;
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
