@@ -1,6 +1,6 @@
 import java.awt.Point;
 
-public class Game {
+public class GameController {
 	public static final int PLAYER1_WINS = 0;
 	public static final int PLAYER2_WINS = 1;
 	public static final int DRAW = 2;
@@ -11,7 +11,7 @@ public class Game {
 	private int nextPlayer;
 	private Board board;
 
-	public Game(int firstPlayer, char firstPlayerSymbol, boolean multiplayer) {
+	public GameController(int firstPlayer, char firstPlayerSymbol, boolean multiplayer) {
 		this.multiplayer = multiplayer;
 		nextPlayer = firstPlayer;
 		board = new Board();

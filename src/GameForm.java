@@ -15,23 +15,25 @@ import javax.swing.SwingConstants;
 public class GameForm extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	private Game game;
+	// Game state variables
+	private GameController gameController;
+	private boolean multiplayer;
+	private int currentPlayer = Board.PLAYER1;
 
+	// GUI components
 	private JButton[][] gridButtons = new JButton[3][3];
 	private JLabel resultLabel;
 	private JButton startMultiPlayerButton;
 	private JButton startSinglePlayerButton;
 	private JButton exitButton;
 
-	private boolean multiplayer;
-	private int currentPlayer = Board.PLAYER1;
-
 	public GameForm() {
-		game = new Game(Board.PLAYER1, Board.X_SYMBOL, false);
-
 		setTitle("Tic Tac Toe");
 		setResizable(false);
 
+		gameController = new GameController(Board.PLAYER1, Board.X_SYMBOL, false);
+
+		// Game result label
 		resultLabel = new JLabel("None", SwingConstants.CENTER);
 		resultLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 		resultLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -83,62 +85,79 @@ public class GameForm extends JFrame implements ActionListener {
 	void showForm() {
 		pack();
 
-		setLocationRelativeTo(null); // Center the frame
+		// Show form on the center
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 
+	/**
+	 * Invoked when an action occurs.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Get the GUI component of the event
 		Object src = e.getSource();
 
-		if (src == startSinglePlayerButton)
-			startNewGame(false);
-		else if (src == startMultiPlayerButton)
-			startNewGame(true);
-		else if (src == exitButton)
-			System.exit(0);
-		else
-			for (int i = 0; i < 3; i++)
-				for (int j = 0; j < 3; j++)
-					if (src == gridButtons[i][j]) {
-						play(src, i, j);
-						return;
-					}
+		if (src instanceof JButton) {
+			// Get the clicked button
+			JButton button = (JButton) src;
+
+			if (button == startSinglePlayerButton)
+				startNewGame(false); // Start new a non-multiplayer game
+			else if (button == startMultiPlayerButton)
+				startNewGame(true); // Start new a multiplayer game
+			else if (button == exitButton)
+				System.exit(0);
+			else
+				for (int i = 0; i < 3; i++)
+					for (int j = 0; j < 3; j++)
+						if (button == gridButtons[i][j]) {
+							play(button, i, j);
+							return;
+						}
+		}
 	}
 
+	/**
+	 * Starts a new game
+	 *
+	 * @param multiplayer</br>
+	 *          true: for multi player game </br>
+	 *          false: for single player game
+	 */
 	private void startNewGame(boolean multiplayer) {
 		this.multiplayer = multiplayer;
 		resetView();
 	}
 
-	private void play(Object src, int i, int j) {
+	private void play(JButton button, int i, int j) {
 		if (multiplayer)
-			multiPlayerPlay(src, i, j);
+			multiPlayerPlay(button, i, j);
 		else
-			singlePlayerPlay(src, i, j);
+			singlePlayerPlay(button, i, j);
 	}
 
-	private void multiPlayerPlay(Object src, int i, int j) {
-		boolean validPlay = game.play(i, j, currentPlayer);
+	private void multiPlayerPlay(JButton button, int i, int j) {
+		boolean validPlay = gameController.play(i, j, currentPlayer);
 		if (validPlay) {
-			((JButton) src).setText("" + game.getBoard().getPlayerSymbol(currentPlayer));
-			currentPlayer = game.getBoard().getOpponent(currentPlayer);
+			button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
+			currentPlayer = gameController.getBoard().getOpponent(currentPlayer);
 
 			updateResult();
 		}
 	}
 
-	private void singlePlayerPlay(Object src, int i, int j) {
-		boolean validPlay = game.play(i, j, Board.PLAYER1);
+	private void singlePlayerPlay(JButton button, int i, int j) {
+		boolean validPlay = gameController.play(i, j, Board.PLAYER1);
 		if (validPlay) {
-			((JButton) src).setText("" + Board.X_SYMBOL);
+			button.setText("" + gameController.getBoard().getPlayerSymbol(currentPlayer));
 			updateResult();
 
 			Thread thread = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					Point p = AI.getBestPlay(game.getBoard(), Board.PLAYER2);
+					Point p = AI.getBestPlay(gameController.getBoard(), Board.PLAYER2);
 					try {
 						Thread.sleep(400);
 					} catch (InterruptedException e) {
@@ -146,9 +165,9 @@ public class GameForm extends JFrame implements ActionListener {
 					}
 
 					if (p != null) {
-						boolean validPlay2 = game.play(p, Board.PLAYER2);
+						boolean validPlay2 = gameController.play(p, Board.PLAYER2);
 						if (validPlay2)
-							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + Board.O_SYMBOL);
+							gridButtons[(int) p.getX()][(int) p.getY()].setText("" + gameController.getBoard().getPlayerSymbol(Board.PLAYER2));
 						updateResult();
 					}
 				}
@@ -158,13 +177,13 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	private void updateResult() {
-		boolean buttonEnabled = game.getGameState() == Game.UNFINISHED;
+		boolean buttonEnabled = gameController.getGameState() == GameController.UNFINISHED;
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				gridButtons[i][j].setEnabled(buttonEnabled);
 
-		resultLabel.setText(game.getStatus());
+		resultLabel.setText(gameController.getStatus());
 
 	}
 
@@ -175,7 +194,7 @@ public class GameForm extends JFrame implements ActionListener {
 	}
 
 	public void resetView() {
-		game.resetGame(Board.PLAYER1, multiplayer);
+		gameController.resetGame(Board.PLAYER1, multiplayer);
 		resetBoard();
 		updateResult();
 	}
