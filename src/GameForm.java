@@ -184,7 +184,7 @@ public class GameForm extends JFrame implements ActionListener {
 	 * finished
 	 */
 	private void updateGameView() {
-		resultLabel.setText(gameController.getStatus());
+		resultLabel.setText(gameController.getStateText());
 
 		boolean buttonEnabled = gameController.getGameState() == GameController.UNFINISHED;
 
