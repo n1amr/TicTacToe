@@ -1,4 +1,4 @@
-import java.awt.Point;
+import java.awt.*;
 
 public class Game {
 	// Game states constants
@@ -17,7 +17,9 @@ public class Game {
 		reset(firstPlayer, multiplayer);
 	}
 
-	/** Reset all game data */
+	/**
+	 * Reset all game data
+	 */
 	public void reset(int firstPlayer, boolean multiplayer) {
 		this.gameState = UNFINISHED;
 		this.multiplayer = multiplayer;
@@ -25,7 +27,9 @@ public class Game {
 		this.board = new Board();
 	}
 
-	/** Play on board and return true if successful */
+	/**
+	 * Play on board and return true if successful
+	 */
 	public boolean play(int i, int j, int player) {
 		boolean valid = false;
 		if (gameState == UNFINISHED && player == nextPlayer) {
@@ -38,7 +42,9 @@ public class Game {
 		return valid;
 	}
 
-	/** Play on board and return true if successful */
+	/**
+	 * Play on board and return true if successful
+	 */
 	public boolean play(Point point, int player) {
 		return play((int) point.getX(), (int) point.getY(), player);
 	}
@@ -64,19 +70,19 @@ public class Game {
 
 	public String getStateText() {
 		switch (gameState) {
-		case PLAYER1_WINS:
-			return ((multiplayer) ? "Player 1 wins" : "You win");
-		case PLAYER2_WINS:
-			return ((multiplayer) ? "Player 2" : "Computer") + " wins";
-		case DRAW:
-			return "Draw";
-		case UNFINISHED:
-			if (multiplayer)
-				return "Player " + ((nextPlayer == Board.PLAYER1 ? "1" : "2") + "'s turn");
-			else
-				return ((nextPlayer == Board.PLAYER1) ? "Your turn" : "Thinking...");
-		default:
-			return "Error";
+			case PLAYER1_WINS:
+				return ((multiplayer) ? "Player 1 wins" : "You win");
+			case PLAYER2_WINS:
+				return ((multiplayer) ? "Player 2" : "Computer") + " wins";
+			case DRAW:
+				return "Draw";
+			case UNFINISHED:
+				if (multiplayer)
+					return "Player " + ((nextPlayer == Board.PLAYER1 ? "1" : "2") + "'s turn");
+				else
+					return ((nextPlayer == Board.PLAYER1) ? "Your turn" : "Thinking...");
+			default:
+				return "Error";
 		}
 	}
 

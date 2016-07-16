@@ -20,7 +20,9 @@ public class Board {
 				data[i][j] = EMPTY;
 	}
 
-	/** Deep copy of the board */
+	/**
+	 * Deep copy of the board
+	 */
 	public Board getCopy() {
 		Board board = new Board();
 
@@ -31,7 +33,9 @@ public class Board {
 		return board;
 	}
 
-	/** Play for player and returns true if play was valid */
+	/**
+	 * Play for player and returns true if play was valid
+	 */
 	public boolean play(int i, int j, int player) {
 		if (isEmptyCell(i, j)) {
 			data[i][j] = getPlayerSymbol(player);
@@ -68,7 +72,9 @@ public class Board {
 		return true;
 	}
 
-	/** Checks whether the player has won */
+	/**
+	 * Checks whether the player has won
+	 */
 	public boolean playerWins(int player) {
 		char playerSymbol = getPlayerSymbol(player);
 

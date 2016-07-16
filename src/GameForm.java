@@ -1,17 +1,8 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 public class GameForm extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -123,9 +114,8 @@ public class GameForm extends JFrame implements ActionListener {
 	/**
 	 * Starts a new game
 	 *
-	 * @param multiplayer</br>
-	 *            true: for multi player game </br>
-	 *            false: for single player game
+	 * @param multiplayer</br> true: for multi player game </br>
+	 *                         false: for single player game
 	 */
 	private void startNewGame(boolean multiplayer) {
 		this.multiplayer = multiplayer;
@@ -172,7 +162,7 @@ public class GameForm extends JFrame implements ActionListener {
 					if (validPlay) {
 						// Write on button
 						gridButtons[(int) best_play.getX()][(int) best_play.getY()]
-								.setText("" + game.getBoard().getPlayerSymbol(Board.PLAYER2));
+							.setText("" + game.getBoard().getPlayerSymbol(Board.PLAYER2));
 						updateGameView();
 					}
 				}
@@ -195,7 +185,9 @@ public class GameForm extends JFrame implements ActionListener {
 				gridButtons[i][j].setEnabled(buttonEnabled);
 	}
 
-	/** Reset current player, game controller and empty text on buttons */
+	/**
+	 * Reset current player, game controller and empty text on buttons
+	 */
 	private void resetGame() {
 		int firstPlayer;
 		if (multiplayer)
