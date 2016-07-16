@@ -1,3 +1,5 @@
+package com.n1amr.tictactoe;
+
 public class Board {
 	private static int N = 3;
 

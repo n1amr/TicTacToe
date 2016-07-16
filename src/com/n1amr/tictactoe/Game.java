@@ -1,13 +1,15 @@
+package com.n1amr.tictactoe;
+
 import java.awt.*;
 
 public class Game {
-	// Game states constants
+	// com.n1amr.tictactoe.Game states constants
 	public static final int PLAYER1_WINS = 0;
 	public static final int PLAYER2_WINS = 1;
 	public static final int DRAW = 2;
 	public static final int UNFINISHED = 3;
 
-	// Game data
+	// com.n1amr.tictactoe.Game data
 	private int gameState;
 	private boolean multiplayer;
 	private int nextPlayer;

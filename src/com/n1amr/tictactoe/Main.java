@@ -1,3 +1,5 @@
+package com.n1amr.tictactoe;
+
 import javax.swing.*;
 
 public class Main {

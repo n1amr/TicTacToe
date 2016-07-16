@@ -1,3 +1,5 @@
+package com.n1amr.tictactoe;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;

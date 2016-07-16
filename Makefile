@@ -1,13 +1,13 @@
-TARGET = Main
+TARGET = com.n1amr.tictactoe.Main
 SRCDIR = src
-OBJDIR = bin
+OBJDIR = out
 
 SRCS = \
-Main.java\
-AI.java\
-Board.java\
-GameForm.java\
-Game.java
+com/n1amr/tictactoe/Main.java\
+com/n1amr/tictactoe/AI.java\
+com/n1amr/tictactoe/Board.java\
+com/n1amr/tictactoe/GameForm.java\
+com/n1amr/tictactoe/Game.java
 
 COMPILER = javac
 FLAGS = -g

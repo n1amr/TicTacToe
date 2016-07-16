@@ -1,3 +1,5 @@
+package com.n1amr.tictactoe;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,7 +9,7 @@ import java.util.Random;
 public class GameForm extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	// Game state variables
+	// com.n1amr.tictactoe.Game state variables
 	private Game game;
 	private boolean multiplayer;
 	private int currentPlayer = Board.PLAYER1;
@@ -25,7 +27,7 @@ public class GameForm extends JFrame implements ActionListener {
 
 		game = new Game(Board.PLAYER1, Board.X_SYMBOL, false);
 
-		// Game result label
+		// com.n1amr.tictactoe.Game result label
 		resultLabel = new JLabel("None", SwingConstants.CENTER);
 		resultLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 		resultLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
